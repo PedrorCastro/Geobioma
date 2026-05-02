@@ -1,0 +1,316 @@
+/* css/styles.css */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
+
+:root {
+    --primary-dark: #1e293b;
+    --accent-emerald: #10b981;
+    --accent-indigo: #6366f1;
+    --bg-main: #f8fafc;
+    --ocean-light: #e2e8f0;
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --card-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Outfit', sans-serif;
+    background-color: var(--bg-main);
+    color: var(--primary-dark);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+header {
+    background: #ffffff;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e2e8f0;
+    z-index: 100;
+    flex-shrink: 0;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-text h1 {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+nav {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.nav-item {
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #64748b;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.nav-item.active {
+    background: #f1f5f9;
+    color: var(--accent-emerald);
+}
+
+/* Layout Dashboard */
+main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 280px 1fr 340px;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    overflow: hidden; /* Mantém o layout fixo em telas grandes */
+}
+
+aside {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 24px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--card-shadow);
+    overflow-y: auto;
+}
+
+.panel-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #94a3b8;
+    margin-bottom: 1.2rem;
+}
+
+/* Mapa */
+#map-container {
+    position: relative;
+    background: #ffffff;
+    border-radius: 32px;
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+#world-map {
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, #f0f4f8 0%, #e2e8f0 100%);
+}
+
+.country-path {
+    transition: fill 0.3s;
+    stroke-linejoin: round;
+}
+
+/* Legenda */
+.legend-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.color-box {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+}
+
+/* Detalhes do Bioma */
+.details-container h2 {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.biome-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 1rem;
+}
+
+.biome-hero {
+    height: 100px;
+    background: rgba(0,0,0,0.03);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+/* Tooltip */
+#map-popup {
+    position: absolute;
+    background: rgba(15, 23, 42, 0.95);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    pointer-events: none;
+    z-index: 1000;
+    display: none;
+}
+
+/* Controles de Zoom */
+.map-controls {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.zoom-btn {
+    width: 36px;
+    height: 36px;
+    background: white;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    cursor: pointer;
+    font-weight: 700;
+}
+
+/* Footer */
+footer {
+    background: white;
+    padding: 1rem;
+    border-top: 1px solid #e2e8f0;
+    text-align: center;
+}
+
+.practice-icons {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.practice-item p {
+    font-size: 0.7rem;
+    color: #64748b;
+}
+
+/* --- RESPONSIVIDADE (MEDIA QUERIES) --- */
+
+/* Laptops e Telas Médias */
+@media (max-width: 1200px) {
+    main {
+        grid-template-columns: 240px 1fr 280px;
+        gap: 1rem;
+        padding: 1rem;
+    }
+}
+
+/* Tablets e iPads */
+@media (max-width: 1024px) {
+    main {
+        grid-template-columns: 220px 1fr; /* Remove a coluna de detalhes da direita */
+        grid-template-rows: 1fr auto;
+    }
+    #biome-details {
+        grid-column: span 2; /* Move o painel de detalhes para baixo */
+        min-height: 250px;
+        overflow-y: visible;
+    }
+    .detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* Celulares (Modo Vertical) */
+@media (max-width: 768px) {
+    body {
+        height: auto;
+        overflow-y: auto;
+    }
+    header {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+    nav {
+        overflow-x: auto;
+        width: 100%;
+        justify-content: flex-start;
+        padding-bottom: 5px;
+    }
+    .nav-item {
+        white-space: nowrap;
+    }
+    main {
+        display: flex;
+        flex-direction: column;
+        height: auto;
+        padding: 0.8rem;
+    }
+    aside, #map-container {
+        width: 100%;
+        min-height: 400px; /* Garante que o mapa tenha espaço no mobile */
+        max-height: none;
+    }
+    #legend {
+        order: 2; /* Legenda vai para depois do mapa */
+        min-height: auto;
+    }
+    #map-container {
+        order: 1; /* Mapa fica no topo */
+    }
+    #biome-details {
+        order: 3; /* Detalhes ficam por último */
+    }
+    .practice-icons {
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+}
+
+/* Ajustes para telas muito pequenas */
+@media (max-width: 480px) {
+    .logo-text h1 {
+        font-size: 0.9rem;
+    }
+    #map-container {
+        min-height: 300px;
+    }
+    .biome-hero {
+        font-size: 2rem;
+        height: 80px;
+    }
+}

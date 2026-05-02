@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Biome Guide | Interactive Dashboard</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- D3.js Library -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <span>🌿</span>
+            <div class="logo-text">
+                <h1>GUIA INTERATIVO DE BIOMAS</h1>
+                <p>Explore, aprenda e preserve nosso planeta</p>
+            </div>
+        </div>
+        <nav>
+            <div class="nav-item active">🗺️ Mapa</div>
+            <div class="nav-item">🌳 Biomas</div>
+            <div class="nav-item">🐾 Espécies</div>
+            <div class="nav-item">🛡️ Boas Práticas</div>
+            <div class="nav-item">ℹ️ Sobre</div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Coluna Esquerda: Legenda e Filtros -->
+        <aside id="legend">
+            <p class="panel-title">🌿 Carregando Legenda...</p>
+            <!-- Preenchido dinamicamente via JS -->
+        </aside>
+
+        <!-- Coluna Central: Mapa Interativo -->
+        <div id="map-container">
+            <svg id="world-map"></svg>
+            
+            <!-- Popup/Tooltip -->
+            <div id="map-popup"></div>
+            
+            <!-- Controles de Zoom Premium -->
+            <div class="map-controls">
+                <button class="zoom-btn" id="zoom-in" title="Aumentar Zoom">+</button>
+                <button class="zoom-btn" id="zoom-out" title="Diminuir Zoom">-</button>
+                <button class="zoom-btn" id="reset-zoom" title="Resetar Visualização">🔄</button>
+            </div>
+        </div>
+
+        <!-- Coluna Direita: Painel de Informações Detalhadas -->
+        <aside id="biome-details">
+            <div class="details-placeholder" style="text-align: center; padding-top: 50%; color: #94a3b8;">
+                <p style="font-size: 3rem; margin-bottom: 1rem;">🌍</p>
+                <p>Navegue pelo mapa e selecione um país para ver detalhes do bioma!</p>
+            </div>
+        </aside>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="practice-icons">
+                <div class="practice-item"><span>♻️</span><p>Reciclar</p></div>
+                <div class="practice-item"><span>💧</span><p>Economizar</p></div>
+                <div class="practice-item"><span>🌳</span><p>Plantar</p></div>
+                <div class="practice-item"><span>🚲</span><p>Transportar</p></div>
+                <div class="practice-item"><span>🐾</span><p>Respeitar</p></div>
+            </div>
+            <p class="quote">"A natureza não precisa de nós. Nós é que precisamos dela."</p>
+        </div>
+    </footer>
+
+    <!-- Lógica da Aplicação -->
+    <script src="js/script.js"></script>
+</body>
+</html>
