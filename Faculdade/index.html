@@ -3,58 +3,255 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Biome Guide | Interactive Dashboard</title>
+    <title>Geobioma | Visualização Interativa de Ecossistemas</title>
     <link rel="stylesheet" href="css/styles.css">
-    <!-- D3.js Library -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
+
     <header>
         <div class="logo-container">
-            <span>🌿</span>
+            <span class="logo-icon">🌿</span>
             <div class="logo-text">
-                <h1>GUIA INTERATIVO DE BIOMAS</h1>
-                <p>Explore, aprenda e preserve nosso planeta</p>
+                <h1>GEOBIOMA</h1>
+                <p>Visualização Interativa de Ecossistemas Mundiais</p>
             </div>
         </div>
         <nav>
-            <div class="nav-item active">🗺️ Mapa</div>
-            <div class="nav-item">🌳 Biomas</div>
-            <div class="nav-item">🐾 Espécies</div>
-            <div class="nav-item">🛡️ Boas Práticas</div>
-            <div class="nav-item">ℹ️ Sobre</div>
+            <div class="nav-item active" data-tab="map">🗺️ Mapa</div>
+            <div class="nav-item" data-tab="biomes">🌳 Biomas</div>
+            <div class="nav-item" data-tab="species">🐾 Espécies</div>
+            <div class="nav-item" data-tab="practices">🛡️ Boas Práticas</div>
+            <div class="nav-item" data-tab="about">ℹ️ Sobre</div>
         </nav>
+        <div class="accessibility-controls">
+            <button id="btn-font-decrease" class="acc-btn" title="Diminuir Fonte (A-)">A-</button>
+            <button id="btn-font-increase" class="acc-btn" title="Aumentar Fonte (A+)">A+</button>
+            <button id="btn-contrast-toggle" class="acc-btn" title="Alternar Alto Contraste">🌓</button>
+            <button id="btn-shortcuts" class="acc-btn" title="Atalhos de Teclado">⌨️</button>
+        </div>
     </header>
 
     <main>
-        <!-- Coluna Esquerda: Legenda e Filtros -->
-        <aside id="legend">
-            <p class="panel-title">🌿 Carregando Legenda...</p>
-            <!-- Preenchido dinamicamente via JS -->
-        </aside>
+        <!-- ABA MAPA -->
+        <section id="view-map" class="tab-view active-view">
+            <!-- Coluna Esquerda: Legenda -->
+            <aside id="legend">
+                <p class="panel-title">⏳ Carregando...</p>
+            </aside>
 
-        <!-- Coluna Central: Mapa Interativo -->
-        <div id="map-container">
-            <svg id="world-map"></svg>
-            
-            <!-- Popup/Tooltip -->
-            <div id="map-popup"></div>
-            
-            <!-- Controles de Zoom Premium -->
-            <div class="map-controls">
-                <button class="zoom-btn" id="zoom-in" title="Aumentar Zoom">+</button>
-                <button class="zoom-btn" id="zoom-out" title="Diminuir Zoom">-</button>
-                <button class="zoom-btn" id="reset-zoom" title="Resetar Visualização">🔄</button>
+            <!-- Centro: Mapa Interativo -->
+            <div id="map-container">
+                <svg id="world-map"></svg>
+                <div id="map-popup"></div>
+                <div class="map-controls">
+                    <button class="zoom-btn" id="zoom-in"    title="Zoom +">+</button>
+                    <button class="zoom-btn" id="zoom-out"   title="Zoom -">−</button>
+                    <button class="zoom-btn" id="reset-zoom" title="Resetar">🔄</button>
+                </div>
             </div>
-        </div>
 
-        <!-- Coluna Direita: Painel de Informações Detalhadas -->
-        <aside id="biome-details">
-            <div class="details-placeholder" style="text-align: center; padding-top: 50%; color: #94a3b8;">
-                <p style="font-size: 3rem; margin-bottom: 1rem;">🌍</p>
-                <p>Navegue pelo mapa e selecione um país para ver detalhes do bioma!</p>
+            <!-- Coluna Direita: Detalhes do País -->
+            <aside id="biome-details">
+                <div class="details-placeholder">
+                    <span class="ph-icon">🌍</span>
+                    <p>Passe o mouse sobre um país no mapa para ver sua fauna, bioma e informações geográficas.</p>
+                </div>
+            </aside>
+        </section>
+
+        <!-- ABA BIOMAS -->
+        <section id="view-biomes" class="tab-view hidden">
+            <h2 class="section-main-title">Biomas Terrestres e Aquáticos</h2>
+            <div class="biomes-grid" id="biomes-list-container">
+                <!-- Preenchido dinamicamente via JS -->
             </div>
-        </aside>
+        </section>
+
+        <!-- ABA ESPÉCIES -->
+        <section id="view-species" class="tab-view hidden">
+            <div class="species-header">
+                <h2 class="section-main-title">Galeria de Espécies Globais</h2>
+                <div class="species-filters">
+                    <input type="text" id="species-search" placeholder="🔍 Buscar espécie por nome...">
+                    <select id="species-filter-biome">
+                        <option value="all">🌳 Todos os Biomas</option>
+                        <!-- Preenchido dinamicamente via JS -->
+                    </select>
+                </div>
+                </div>
+            </div>
+            <div class="species-grid" id="species-list-container">
+                <!-- Preenchido dinamicamente via JS -->
+            </div>
+        </section>
+
+        <!-- ABA BOAS PRÁTICAS -->
+        <section id="view-practices" class="tab-view hidden">
+            <h2 class="section-main-title">Boas Práticas de Conservação</h2>
+            <div class="practices-grid">
+                <div class="practice-card">
+                    <div class="practice-card-inner">
+                        <div class="practice-card-front">
+                            <span class="p-card-icon">♻️</span>
+                            <h3>Consumo Responsável e Resíduos</h3>
+                            <p>Reduza o uso de plástico de uso único e faça a separação correta do lixo reciclável.</p>
+                            <span class="flip-hint">Girar para ler mais 🔄</span>
+                        </div>
+                        <div class="practice-card-back">
+                            <h3>Ação Prática</h3>
+                            <ul>
+                                <li>Elimine copos, canudos e sacolas plásticas. Use retornáveis.</li>
+                                <li>Faça compostagem de resíduos orgânicos em casa se possível.</li>
+                                <li>Encaminhe eletroeletrônicos e pilhas para pontos de coleta especiais.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="practice-card">
+                    <div class="practice-card-inner">
+                        <div class="practice-card-front">
+                            <span class="p-card-icon">💧</span>
+                            <h3>Preservação da Água</h3>
+                            <p>Economize água no dia a dia e evite a poluição de recursos hídricos.</p>
+                            <span class="flip-hint">Girar para ler mais 🔄</span>
+                        </div>
+                        <div class="practice-card-back">
+                            <h3>Ação Prática</h3>
+                            <ul>
+                                <li>Feche a torneira ao escovar os dentes e reduza o tempo no banho.</li>
+                                <li>Use água da chuva para regar plantas e limpar calçadas.</li>
+                                <li>Não descarte óleo de cozinha, medicamentos ou produtos químicos no ralo.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="practice-card">
+                    <div class="practice-card-inner">
+                        <div class="practice-card-front">
+                            <span class="p-card-icon">🌳</span>
+                            <h3>Reflorestamento e Biodiversidade</h3>
+                            <p>Apoie o plantio de árvores nativas e a regeneração de áreas verdes locais.</p>
+                            <span class="flip-hint">Girar para ler mais 🔄</span>
+                        </div>
+                        <div class="practice-card-back">
+                            <h3>Ação Prática</h3>
+                            <ul>
+                                <li>Plante flores e vegetação nativa para atrair polinizadores (abelhas, borboletas).</li>
+                                <li>Participe de mutirões de plantio comunitário em sua região.</li>
+                                <li>Evite comprar mudas de espécies invasoras que prejudicam a flora local.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="practice-card">
+                    <div class="practice-card-inner">
+                        <div class="practice-card-front">
+                            <span class="p-card-icon">🚲</span>
+                            <h3>Mobilidade Sustentável</h3>
+                            <p>Reduza a emissão de gases poluentes optando por transportes alternativos.</p>
+                            <span class="flip-hint">Girar para ler mais 🔄</span>
+                        </div>
+                        <div class="practice-card-back">
+                            <h3>Ação Prática</h3>
+                            <ul>
+                                <li>Priorize caminhar, pedalar ou usar transporte público sempre que possível.</li>
+                                <li>Considere compartilhar caronas para o trabalho ou universidade.</li>
+                                <li>Mantenha veículos revisados para minimizar a emissão de poluentes.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="practice-card">
+                    <div class="practice-card-inner">
+                        <div class="practice-card-front">
+                            <span class="p-card-icon">🐾</span>
+                            <h3>Respeito à Vida Silvestre</h3>
+                            <p>Ajude a erradicar o comércio de animais silvestres e proteja seus habitats.</p>
+                            <span class="flip-hint">Girar para ler mais 🔄</span>
+                        </div>
+                        <div class="practice-card-back">
+                            <h3>Ação Prática</h3>
+                            <ul>
+                                <li>Nunca compre animais silvestres ilegais (aves, répteis) como pets.</li>
+                                <li>Denuncie focos de caça, desmatamento ilegal ou maus-tratos a órgãos ambientais.</li>
+                                <li>Não alimente animais selvagens em trilhas e prados para não alterar seus hábitos.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="practice-card">
+                    <div class="practice-card-inner">
+                        <div class="practice-card-front">
+                            <span class="p-card-icon">🌐</span>
+                            <h3>Cidadania e Educação Ambiental</h3>
+                            <p>Compartilhe conhecimento ecológico e cobre políticas públicas sustentáveis.</p>
+                            <span class="flip-hint">Girar para ler mais 🔄</span>
+                        </div>
+                        <div class="practice-card-back">
+                            <h3>Ação Prática</h3>
+                            <ul>
+                                <li>Use plataformas como o Geobioma para ensinar crianças e jovens sobre biomas.</li>
+                                <li>Participe de consultas públicas sobre preservação e saneamento.</li>
+                                <li>Apoie produtores locais e marcas comprometidas com a sustentabilidade.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ABA SOBRE -->
+        <section id="view-about" class="tab-view hidden">
+            <div class="about-container">
+                <div class="about-card">
+                    <h2>Guia Interativo de Preservação Local — Geobioma</h2>
+                    <p>O <strong>Geobioma</strong> é uma plataforma interativa voltada à educação ambiental, desenvolvida como projeto prático para a disciplina de <strong>Projeto e Desenvolvimento I (PD-I)</strong>.</p>
+                    
+                    <h3>Ficha Técnica</h3>
+                    <ul>
+                        <li><strong>Estudante Desenvolvedor:</strong> Pedro Castro</li>
+                        <li><strong>Curso:</strong> Ciência da Computação</li>
+                        <li><strong>Instituição:</strong> Faculdade</li>
+                        <li><strong>Tecnologias Utilizadas:</strong> HTML5, Vanilla CSS3, JavaScript (ES6+), D3.js para mapeamento e GeoJSON.</li>
+                    </ul>
+
+                    <h3>Diretrizes de IHC Aplicadas</h3>
+                    <p>Para assegurar uma excelente experiência ao usuário, o projeto foi guiado por princípios de Interface Humano-Computador:</p>
+                    <div class="ihc-principles">
+                        <div class="ihc-box">
+                            <strong>👁️ Visibilidade do Sistema</strong>
+                            <p>O mapa e as legendas interagem dinamicamente. Ao focar ou passar o mouse em um país, todo o seu bioma associado é destacado simultaneamente.</p>
+                        </div>
+                        <div class="ihc-box">
+                            <strong>⚡ Feedback Imediato</strong>
+                            <p>Exibição instantânea de popups flutuantes contendo flora, fauna e principais ameaças ao posicionar o cursor, além de transições fluidas de zoom e opacidade.</p>
+                        </div>
+                        <div class="ihc-box">
+                            <strong>♿ Acessibilidade e Inclusão</strong>
+                            <p>Controles de dimensionamento de fonte adaptáveis, modo de alto contraste para baixa visão e suporte completo a navegação por teclado nos caminhos do mapa com etiquetas descritivas para leitores de tela (`aria-label`).</p>
+                        </div>
+                        <div class="ihc-box">
+                            <strong>🧩 Prevenção de Erros</strong>
+                            <p>Detecção e tratamento de falhas no carregamento de imagens de animais com fallbacks gráficos automáticos e atribuições de direitos autorais de forma visível.</p>
+                        </div>
+                    </div>
+
+                    <h3>Referências Bibliográficas</h3>
+                    <p class="about-refs">
+                        1. BRASIL. <em>Lei nº 9.795, de 27 de abril de 1999</em>. Dispõe sobre a educação ambiental, institui a Política Nacional de Educação Ambiental e dá outras providências.<br>
+                        2. SHNEIDERMAN, B. et al. <em>Designing the User Interface</em>: Strategies for Effective Human-Computer Interaction. 6. ed. Pearson, 2016.<br>
+                        3. W3C. <em>Web Content Accessibility Guidelines (WCAG) 2.1</em>. Recomendação oficial para acessibilidade na web.<br>
+                        4. WIKIMEDIA COMMONS. Acervo público de imagens sob licença Creative Commons utilizado para ilustrar fauna, flora e biomas.
+                    </p>
+                </div>
+            </div>
+        </section>
     </main>
 
     <footer>
@@ -63,14 +260,75 @@
                 <div class="practice-item"><span>♻️</span><p>Reciclar</p></div>
                 <div class="practice-item"><span>💧</span><p>Economizar</p></div>
                 <div class="practice-item"><span>🌳</span><p>Plantar</p></div>
-                <div class="practice-item"><span>🚲</span><p>Transportar</p></div>
-                <div class="practice-item"><span>🐾</span><p>Respeitar</p></div>
+                <div class="practice-item"><span>🚲</span><p>Mobilidade</p></div>
+                <div class="practice-item"><span>🐾</span><p>Preservar</p></div>
             </div>
             <p class="quote">"A natureza não precisa de nós. Nós é que precisamos dela."</p>
         </div>
     </footer>
 
-    <!-- Lógica da Aplicação -->
+    <!-- MODAL DE DETALHES DA ESPÉCIE -->
+    <div id="species-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close-btn" aria-label="Fechar Modal">&times;</button>
+            <div class="modal-body-layout">
+                <div class="modal-left-img">
+                    <img id="modal-img" src="" alt="">
+                    <div id="modal-img-fallback" class="img-fallback hidden">🐾</div>
+                </div>
+                <div class="modal-right-info">
+                    <div class="modal-header-info">
+                        <span id="modal-badge" class="biome-badge"></span>
+                        <span id="modal-status" class="status-badge"></span>
+                    </div>
+                    <h2 id="modal-title"></h2>
+                    <p id="modal-scientific" class="scientific-name"></p>
+                    
+                    <div class="modal-section">
+                        <h4>📋 Descrição</h4>
+                        <p id="modal-desc"></p>
+                    </div>
+                    <div class="modal-section">
+                        <h4>🍽️ Dieta / Hábito</h4>
+                        <p id="modal-diet"></p>
+                    </div>
+                    <div class="modal-section">
+                        <h4>⚠️ Ameaças Principais</h4>
+                        <p id="modal-threats" class="threats-text"></p>
+                    </div>
+                    <div class="modal-section">
+                        <h4>🛡️ Como Ajudar / Prática Sustentável</h4>
+                        <p id="modal-action"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE GUIA DE ATALHOS / ACESSIBILIDADE -->
+    <div id="shortcuts-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="shortcuts-title">
+        <div class="modal-content small-modal">
+            <button class="modal-close" id="shortcuts-close-btn" aria-label="Fechar Modal">&times;</button>
+            <h2 id="shortcuts-title">⌨️ Guia de Acessibilidade & Atalhos</h2>
+            <div class="shortcuts-body">
+                <p>Esta plataforma foi desenhada sob rígidos critérios de IHC para ser acessível a todos:</p>
+                <ul>
+                    <li><strong>Navegação por Mapa:</strong> Pressione a tecla <kbd>Tab</kbd> para navegar sequencialmente pelos países do mapa. O país selecionado será destacado e suas informações exibidas no painel de detalhes.</li>
+                    <li><strong>Ativação:</strong> Ao focar em um país por teclado, suas informações e bioma serão carregados automaticamente.</li>
+                    <li><strong>Controle de Zoom por Teclado:</strong>
+                        <ul>
+                            <li>Use <kbd>+</kbd> ou clique no botão de zoom para aproximar.</li>
+                            <li>Use <kbd>-</kbd> para afastar.</li>
+                            <li>Use <kbd>R</kbd> ou clique no botão de reset para restaurar o mapa original.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Ajuste de Fonte:</strong> Utilize os botões <strong>A+</strong> e <strong>A-</strong> no cabeçalho para dimensionar todo o texto do sistema.</li>
+                    <li><strong>Alto Contraste:</strong> Clique no botão 🌓 no cabeçalho ou pressione <kbd>Alt + C</kbd> para alternar as cores para o modo de alta legibilidade.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
     <script src="js/script.js"></script>
 </body>
 </html>

@@ -1,0 +1,11 @@
+{
+  "name": "geobioma",
+  "version": "1.0.0",
+  "description": "Servidor Node.js para hospedar o site Geobioma localmente e permitir acesso na rede.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "Pedro Castro",
+  "license": "MIT"
+}

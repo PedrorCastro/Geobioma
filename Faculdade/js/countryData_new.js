@@ -1,215 +1,3 @@
-// js/script.js — Geobioma v3.0 (Revisado)
-const GEOJSON_SOURCE = 'geoJSON/countries.geojson';
-
-// ─── DADOS DE 10 BIOMAS E AMEAÇAS (RF01, RF04) ─────────────────────────────────
-const biomesData = {
-    'tundra': {
-        nome: 'Tundra',
-        cor: '#818CF8',
-        desc: 'Bioma extremamente frio de altas latitudes, com vegetação rasteira de musgos, líquens e arbustos de pequeno porte. O solo permanece congelado na maior parte do ano (permafrost).',
-        icon: '❄️',
-        animals: ['Urso-polar', 'Rena-ártica', 'Raposa-ártica', 'Lemingue', 'Lobo-ártico'],
-        ameacas: 'Aquecimento global acelerado, derretimento de permafrost com liberação de metano, exploração petrolífera e mineral.',
-        heroImg: 'img/tundra_biome_hero_1777760888905.png'
-    },
-    'taiga': {
-        nome: 'Taiga (Floresta Boreal)',
-        cor: '#059669',
-        desc: 'Floresta de coníferas (pinheiros e abetos) em regiões subárticas. Caracterizada por invernos longos e rigorosos com queda constante de neve, cobrindo grandes extensões continentais.',
-        icon: '🌲',
-        animals: ['Lobo-cinzento', 'Alce', 'Lince-euroasiático', 'Urso-pardo', 'Caribú'],
-        ameacas: 'Exploração madeireira intensiva, incêndios florestais amplificados por secas temporárias, mineração poluidora.',
-        heroImg: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Lake_Baikal_from_the_Space.jpg/480px-Lake_Baikal_from_the_Space.jpg'
-    },
-    'temp-forest': {
-        nome: 'Floresta Temperada',
-        cor: '#34D399',
-        desc: 'Ecossistema com quatro estações bem definidas, rico em árvores caducifólias (que perdem suas folhas no outono) e solo fértil propício para biodiversidade de clima moderado.',
-        icon: '🍂',
-        animals: ['Veado-nobre', 'Raposa-vermelha', 'Esquilo-cinzento', 'Javali', 'Águia-careca'],
-        ameacas: 'Fragmentação florestal pela urbanização densa, conversão de solo para agricultura intensiva, poluição química.',
-        heroImg: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Horseshoe_Bend_-_colorado_river_-_arizona.jpg/480px-Horseshoe_Bend_-_colorado_river_-_arizona.jpg'
-    },
-    'tropical-forest': {
-        nome: 'Floresta Tropical',
-        cor: '#16a34a',
-        desc: 'Florestas densas e úmidas localizadas próximas ao equador. Concentram a maior biodiversidade do planeta, com pluviosidade constante e copas arbóreas estratificadas.',
-        icon: '🌴',
-        animals: ['Onça-pintada', 'Arara-azul', 'Gorila-das-montanhas', 'Orangotango', 'Tucano'],
-        ameacas: 'Desmatamento massivo para pastagem e monoculturas, queimadas ilegais, extração ilegal de madeira, garimpo.',
-        heroImg: 'img/tropical_forest_hero_1777760369123.png'
-    },
-    'desert': {
-        nome: 'Deserto',
-        cor: '#FBBF24',
-        desc: 'Regiões áridas com pluviosidade quase inexistente, solo arenoso ou rochoso e grande oscilação térmica entre o dia (quente) e a noite (fria). Flora e fauna com adaptações xerófilas.',
-        icon: '🌵',
-        animals: ['Camelo-árabe', 'Feneco', 'Escorpião-dourado', 'Víbora-do-deserto', 'Lagarto-do-deserto'],
-        ameacas: 'Mudança climática reduzindo poços tradicionais, desertificação de bordas agrícolas por sobrepastoreio, uso abusivo de águas subterrâneas.',
-        heroImg: 'img/desert_biome_hero_1777760824112.png'
-    },
-    'savanna': {
-        nome: 'Savana / Cerrado',
-        cor: '#F59E0B',
-        desc: 'Campos tropicais caracterizados por uma estação seca prolongada e uma chuvosa. Árvores tortuosas de casca grossa e gramíneas altas sustentam grandes bandos de herbívoros.',
-        icon: '🦁',
-        animals: ['Leão', 'Elefante-africano', 'Girafa', 'Zebra', 'Guepardo'],
-        ameacas: 'Avanço de grandes lavouras de grãos, caça ilegal de espécies ameaçadas, incêndios criminosos fora da época ecológica natural.',
-        heroImg: 'img/savanna_biome_hero_1777761299521.png'
-    },
-    'mediterranean': {
-        nome: 'Mediterrâneo',
-        cor: '#F97316',
-        desc: 'Vegetação xerófila, arbustiva e florestal adaptada a verões extremamente secos e quentes e invernos chuvosos e amenos. Solos propícios a oliveiras e plantas aromáticas.',
-        icon: '🍋',
-        animals: ['Lince-ibérico', 'Macaco-de-Barbária', 'Cegonha-branca', 'Tartaruga-loggerhead', 'Coelho-europeu'],
-        ameacas: 'Incêndios florestais violentos de verão, urbanização intensa de faixas costeiras pelo turismo de massa.',
-        heroImg: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Alhambra_%28Granada%29.jpg/480px-Alhambra_%28Granada%29.jpg'
-    },
-    'mountain': {
-        nome: 'Montanha',
-        cor: '#0EA5E9',
-        desc: 'Ecossistemas de altitude elevada como a Cordilheira dos Andes ou o Himalaia. A vegetação varia em faixas ecológicas conforme a queda de temperatura e ventos fortes.',
-        icon: '🏔️',
-        animals: ['Condor-dos-Andes', 'Leopardo-das-neves', 'Iaque', 'Cabra-montesa', 'Lama'],
-        ameacas: 'Derretimento acelerado de geleiras glaciais de água doce, turismo predatório de alpinismo, mineração de altitude.',
-        heroImg: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Simien_Mts_12.jpg/480px-Simien_Mts_12.jpg'
-    },
-    'polar': {
-        nome: 'Regiões Polares',
-        cor: '#38BDF8',
-        desc: 'Calotas de gelo permanente do Ártico e Antártida. Ambiente aquático marinho extremamente rico que suporta predadores de topo adaptados à gordura térmica.',
-        icon: '🐧',
-        animals: ['Pinguim-imperador', 'Orca', 'Morsa', 'Foca-da-groelândia', 'Baleia-jubarte'],
-        ameacas: 'Perda catastrófica de plataformas de gelo pelo aquecimento das águas, aumento de rotas comerciais marítimas poluentes.',
-        heroImg: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Above_Greenland_%2813990460099%29.jpg/480px-Above_Greenland_%2813990460099%29.jpg'
-    },
-    'ocean': {
-        nome: 'Oceanos',
-        cor: '#2563EB',
-        desc: 'Massas de água salgada contínuas cobrindo 71% do globo terrestre. O fitoplâncton marinho gera a maior fração do oxigênio atmosférico global e sustenta a cadeia trófica pelágica.',
-        icon: '🌊',
-        animals: ['Tubarão-branco', 'Golfinho-comum', 'Tartaruga-marinha', 'Recife-de-coral', 'Plâncton'],
-        ameacas: 'Acúmulo maciço de lixo plástico, acidificação devido à queima de combustíveis fósseis, branqueamento térmico de corais e sobrepesca indiscriminada.',
-        heroImg: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Salmo_salar_GLERL_1.jpg/480px-Salmo_salar_GLERL_1.jpg'
-    }
-};
-
-// ─── BASE DE DADOS DE ESPÉCIES PARA DETALHES (RF05) ────────────────────────────
-const speciesDatabase = {
-    "Onça-pintada": {
-        scientific: "Panthera onca",
-        status: "Quase Ameaçada",
-        statusClass: "status-near-threatened",
-        desc: "O maior felino das Américas e o terceiro maior do mundo. Possui uma mordida incrivelmente forte que lhe permite perfurar cascos de répteis. Como predador de topo de cadeia, é vital para regular populações de presas.",
-        diet: "Carnívoro (jacarés, capivaras, veados, antas)",
-        threats: "Perda e fragmentação de habitat pelo avanço da agropecuária, caça ilegal e retaliação de fazendeiros devido a ataques a rebanhos.",
-        action: "Apoiar a conservação de corredores ecológicos que evitam o isolamento genético de populações de onças.",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/640px-Standing_jaguar.jpg",
-        biome: "tropical-forest"
-    },
-    "Arara-azul": {
-        scientific: "Anodorhynchus hyacinthinus",
-        status: "Vulnerável",
-        statusClass: "status-vulnerable",
-        desc: "A maior espécie de arara do mundo. Com uma bela plumagem azul e bico extremamente robusto, vive em pares ou grupos no Cerrado e Pantanal. Alimenta-se de castanhas de palmeiras nativas específicas.",
-        diet: "Herbívoro (castanhas de palmeira acuri e bocaiúva)",
-        threats: "Tráfico ilegal de animais silvestres, perda de habitat e destruição de árvores de grande porte necessárias para nidificação.",
-        action: "Combater o tráfico ilegal e apoiar projetos de ninhos artificiais para reprodução da espécie no Pantanal.",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Hyacinth-macaw.jpg/640px-Hyacinth-macaw.jpg",
-        biome: "tropical-forest"
-    },
-    "Urso-polar": {
-        scientific: "Ursus maritimus",
-        status: "Vulnerável",
-        statusClass: "status-vulnerable",
-        desc: "Super-predador do Ártico adaptado ao frio extremo. Possui pele preta e pelos translúcidos que absorvem o calor do sol. Depende das plataformas de gelo marinho estável para caçar focas, sua principal fonte de alimento.",
-        diet: "Carnívoro (focas, peixes, carcaças de baleias)",
-        threats: "Derretimento acelerado do gelo marinho devido às mudanças climáticas globais, forçando os ursos a nadar distâncias exaustivas e passar longos períodos de jejum.",
-        action: "Reduzir as emissões de gases de efeito estufa para retardar o aquecimento global das águas do Ártico.",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Polar_Bear_-_Alaska_%28cropped%29.jpg/640px-Polar_Bear_-_Alaska_%28cropped%29.jpg",
-        biome: "polar"
-    },
-    "Panda-gigante": {
-        scientific: "Ailuropoda melanoleuca",
-        status: "Vulnerável",
-        statusClass: "status-vulnerable",
-        desc: "Símbolo universal da conservação ambiental. Este urso adaptou-se a uma dieta quase exclusiva de bambu. Habita florestas montanhosas úmidas da China central e passa até 14 horas por dia alimentando-se.",
-        diet: "Herbívoro (bambu)",
-        threats: "Fragmentação de suas florestas de bambu por estradas, infraestrutura humana e agricultura de encostas.",
-        action: "Proteger as reservas de bambu na China e manter corredores verdes interconectando reservas de pandas.",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Grosser_Panda.JPG/640px-Grosser_Panda.JPG",
-        biome: "temp-forest"
-    },
-    "Coala": {
-        scientific: "Phascolarctos cinereus",
-        status: "Vulnerável",
-        statusClass: "status-vulnerable",
-        desc: "Marsupial herbívoro arborícola nativo da Austrália. Dorme até 20 horas por dia para economizar energia, já que as folhas de eucalipto que ingere são fibrosas, pobres em calorias e tóxicas para outros mamíferos.",
-        diet: "Herbívoro (folhas de eucalipto)",
-        threats: "Perda massiva de florestas de eucalipto devido à expansão urbana, incêndios florestais agravados por secas extremas e proliferação de doenças.",
-        action: "Apoiar a conservação de florestas de eucalipto e plantar árvores nativas em áreas degradadas australianas.",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Koala_climbing_tree.jpg/640px-Koala_climbing_tree.jpg",
-        biome: "desert"
-    },
-    "Lince-ibérico": {
-        scientific: "Lynx pardinus",
-        status: "Em Perigo",
-        statusClass: "status-endangered",
-        desc: "Um dos felinos mais raros do mundo, nativo da Península Ibérica. Distingue-se por suas orelhas pontiagudas com pincéis de pelos pretos e gola facial. Depende fortemente de populações saudáveis de coelho-bravo.",
-        diet: "Carnívoro (coelho-bravo europeu)",
-        threats: "Declínio drástico em sua presa principal decorrente de surtos de vírus em coelhos, atropelamentos rodoviários e perda de matagal mediterrâneo.",
-        action: "Apoiar projetos de reprodução em cativeiro, reintrodução ecológica e construção de passagens de fauna sob estradas.",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Lynx_pardinus_-_01.jpg/640px-Lynx_pardinus_-_01.jpg",
-        biome: "mediterranean"
-    },
-    "Condor-dos-Andes": {
-        scientific: "Vultur gryphus",
-        status: "Vulnerável",
-        statusClass: "status-vulnerable",
-        desc: "Uma das maiores aves voadoras do planeta, com envergadura de até 3,2 metros. Habita os picos elevados da Cordilheira dos Andes, planando em correntes térmicas de ar para localizar restos de animais a grandes distâncias.",
-        diet: "Necrófago (carcaças de mamíferos selvagens e de rebanhos)",
-        threats: "Envenenamento acidental por iscas destinadas a predadores selvagens, caça direta ilegal e colisões com linhas de transmissão de energia de altitude.",
-        action: "Promover campanhas locais contra o envenenamento de carniça e criar santuários de proteção na região andina.",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Andean_condor_%28Vultur_gryphus%29.jpg/640px-Andean_condor_%28Vultur_gryphus%29.jpg",
-        biome: "mountain"
-    },
-    "Pinguim-imperador": {
-        scientific: "Aptenodytes forsteri",
-        status: "Quase Ameaçada",
-        statusClass: "status-near-threatened",
-        desc: "A maior de todas as espécies de pinguins, endêmica da Antártida. Famosa por seu ciclo reprodutivo extremo no inverno antártico, onde os machos incubam um único ovo sob temperaturas abaixo de -40°C por dois meses.",
-        diet: "Piscívoro (peixes, krill, lulas)",
-        threats: "Perda de gelo marinho estável necessário para abrigar colônias de filhotes e perturbações nas correntes marítimas que reduzem a disponibilidade de krill.",
-        action: "Proteger as reservas marinhas ao redor da Antártida e combater as alterações climáticas globais.",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Emperor_Penguin_Manchot_empereur.jpg/640px-Emperor_Penguin_Manchot_empereur.jpg",
-        biome: "polar"
-    },
-    "Tubarão-branco": {
-        scientific: "Carcharodon carcharias",
-        status: "Vulnerável",
-        statusClass: "status-vulnerable",
-        desc: "O superpredador marinho por excelência. Desempenha um papel crítico nos oceanos ao regular a saúde das populações de mamíferos marinhos e peixes. Possui fileiras de dentes afiados que se renovam continuamente.",
-        diet: "Carnívoro (leões marinhos, focas, golfinhos, peixes grandes)",
-        threats: "Pesca acidental em redes de arrasto oceânico, caça por retaliação / esporte e a prática ilegal de finning (extração de nadadeiras).",
-        action: "Promover a proibição do comércio de nadadeiras de tubarão e apoiar a criação de santuários marinhos internacionais.",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/White_shark.jpg/640px-White_shark.jpg",
-        biome: "ocean"
-    },
-    "Camelo-árabe": {
-        scientific: "Camelus dromedarius",
-        status: "Pouco Preocupante",
-        statusClass: "status-least-concern",
-        desc: "O dromedário é um animal perfeitamente adaptado a desertos severos. Sua corcova armazena gordura que pode ser convertida em energia. Pode resistir a dias sem beber e perder até 30% do peso corporal em água sem desidratar.",
-        diet: "Herbívoro (plantas espinhosas, arbustos desérticos, gramíneas secas)",
-        threats: "Mudanças ecológicas severas em oásis tradicionais e perda de rotas de migração livre.",
-        action: "Preservar poços de água tradicionais em desertos e rotas nômades ecológicas no norte da África e Oriente Médio.",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/CamelCase.jpg/640px-CamelCase.jpg",
-        biome: "desert"
-    }
-};
-
-// ─── MAPEAMENTO DE PAÍSES E BIOMAS ESPECÍFICOS (Revisado com 10 biomas) ────────
 const countryData = {
 "Indonesia": {
         biome: "tropical-forest",
@@ -284,7 +72,7 @@ const countryData = {
             { name: "Veado-nobre", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }, { name: "Raposa-vermelha", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }, { name: "Esquilo-cinzento", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }
         ],
         biomeImg: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Horseshoe_Bend_-_colorado_river_-_arizona.jpg/480px-Horseshoe_Bend_-_colorado_river_-_arizona.jpg",
-        capital: "Dhekelia", population: "—", area: "—", climate: "Temperado / Continental"
+        capital: "—", population: "—", area: "—", climate: "Temperado / Continental"
     },
     "Cyprus": {
         biome: "temp-forest",
@@ -425,7 +213,7 @@ const countryData = {
             { name: "Veado-nobre", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }, { name: "Raposa-vermelha", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }, { name: "Esquilo-cinzento", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }
         ],
         biomeImg: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Horseshoe_Bend_-_colorado_river_-_arizona.jpg/480px-Horseshoe_Bend_-_colorado_river_-_arizona.jpg",
-        capital: "Hargeisa", population: "—", area: "—", climate: "Temperado / Continental"
+        capital: "—", population: "—", area: "—", climate: "Temperado / Continental"
     },
 "France": {
         biome: "temp-forest",
@@ -597,7 +385,7 @@ const countryData = {
             { name: "Veado-nobre", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }, { name: "Raposa-vermelha", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }, { name: "Esquilo-cinzento", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }
         ],
         biomeImg: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Horseshoe_Bend_-_colorado_river_-_arizona.jpg/480px-Horseshoe_Bend_-_colorado_river_-_arizona.jpg",
-        capital: "Marigot / Philipsburg", population: "—", area: "—", climate: "Temperado / Continental"
+        capital: "—", population: "—", area: "—", climate: "Temperado / Continental"
     },
     "Sint Maarten": {
         biome: "temp-forest",
@@ -607,7 +395,7 @@ const countryData = {
             { name: "Veado-nobre", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }, { name: "Raposa-vermelha", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }, { name: "Esquilo-cinzento", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }
         ],
         biomeImg: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Horseshoe_Bend_-_colorado_river_-_arizona.jpg/480px-Horseshoe_Bend_-_colorado_river_-_arizona.jpg",
-        capital: "Philipsburg", population: "—", area: "—", climate: "Temperado / Continental"
+        capital: "—", population: "—", area: "—", climate: "Temperado / Continental"
     },
     "Oman": {
         biome: "desert",
@@ -1561,7 +1349,7 @@ const countryData = {
             { name: "Veado-nobre", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }, { name: "Raposa-vermelha", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }, { name: "Esquilo-cinzento", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }
         ],
         biomeImg: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Horseshoe_Bend_-_colorado_river_-_arizona.jpg/480px-Horseshoe_Bend_-_colorado_river_-_arizona.jpg",
-        capital: "Guantánamo Bay", population: "—", area: "—", climate: "Temperado / Continental"
+        capital: "—", population: "—", area: "—", climate: "Temperado / Continental"
     },
     "Cuba": {
         biome: "tropical-forest",
@@ -1898,7 +1686,7 @@ const countryData = {
             { name: "Veado-nobre", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }, { name: "Raposa-vermelha", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }, { name: "Esquilo-cinzento", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }
         ],
         biomeImg: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Horseshoe_Bend_-_colorado_river_-_arizona.jpg/480px-Horseshoe_Bend_-_colorado_river_-_arizona.jpg",
-        capital: "Hong Kong", population: "—", area: "—", climate: "Temperado / Continental"
+        capital: "—", population: "—", area: "—", climate: "Temperado / Continental"
     },
     "Vatican": {
         biome: "temp-forest",
@@ -1908,7 +1696,7 @@ const countryData = {
             { name: "Veado-nobre", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }, { name: "Raposa-vermelha", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }, { name: "Esquilo-cinzento", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }
         ],
         biomeImg: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Horseshoe_Bend_-_colorado_river_-_arizona.jpg/480px-Horseshoe_Bend_-_colorado_river_-_arizona.jpg",
-        capital: "Vatican City", population: "—", area: "—", climate: "Temperado / Continental"
+        capital: "—", population: "—", area: "—", climate: "Temperado / Continental"
     },
     "Northern Cyprus": {
         biome: "temp-forest",
@@ -1918,7 +1706,7 @@ const countryData = {
             { name: "Veado-nobre", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }, { name: "Raposa-vermelha", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }, { name: "Esquilo-cinzento", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }
         ],
         biomeImg: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Horseshoe_Bend_-_colorado_river_-_arizona.jpg/480px-Horseshoe_Bend_-_colorado_river_-_arizona.jpg",
-        capital: "North Nicosia", population: "—", area: "—", climate: "Temperado / Continental"
+        capital: "—", population: "—", area: "—", climate: "Temperado / Continental"
     },
     "Cyprus No Mans Area": {
         biome: "temp-forest",
@@ -1948,7 +1736,7 @@ const countryData = {
             { name: "Veado-nobre", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }, { name: "Raposa-vermelha", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }, { name: "Esquilo-cinzento", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }
         ],
         biomeImg: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Horseshoe_Bend_-_colorado_river_-_arizona.jpg/480px-Horseshoe_Bend_-_colorado_river_-_arizona.jpg",
-        capital: "Baikonur", population: "—", area: "—", climate: "Temperado / Continental"
+        capital: "—", population: "—", area: "—", climate: "Temperado / Continental"
     },
     "Akrotiri Sovereign Base Area": {
         biome: "temp-forest",
@@ -1958,7 +1746,7 @@ const countryData = {
             { name: "Veado-nobre", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }, { name: "Raposa-vermelha", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }, { name: "Esquilo-cinzento", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }
         ],
         biomeImg: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Horseshoe_Bend_-_colorado_river_-_arizona.jpg/480px-Horseshoe_Bend_-_colorado_river_-_arizona.jpg",
-        capital: "Akrotiri", population: "—", area: "—", climate: "Temperado / Continental"
+        capital: "—", population: "—", area: "—", climate: "Temperado / Continental"
     },
     "Southern Patagonian Ice Field": {
         biome: "temp-forest",
@@ -2320,7 +2108,7 @@ const countryData = {
             { name: "Veado-nobre", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }, { name: "Raposa-vermelha", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }, { name: "Esquilo-cinzento", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }
         ],
         biomeImg: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Horseshoe_Bend_-_colorado_river_-_arizona.jpg/480px-Horseshoe_Bend_-_colorado_river_-_arizona.jpg",
-        capital: "Charlotte Amalie", population: "—", area: "—", climate: "Temperado / Continental"
+        capital: "—", population: "—", area: "—", climate: "Temperado / Continental"
     },
     "Saint Barthelemy": {
         biome: "temp-forest",
@@ -2330,7 +2118,7 @@ const countryData = {
             { name: "Veado-nobre", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }, { name: "Raposa-vermelha", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }, { name: "Esquilo-cinzento", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }
         ],
         biomeImg: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Horseshoe_Bend_-_colorado_river_-_arizona.jpg/480px-Horseshoe_Bend_-_colorado_river_-_arizona.jpg",
-        capital: "Gustavia", population: "—", area: "—", climate: "Temperado / Continental"
+        capital: "—", population: "—", area: "—", climate: "Temperado / Continental"
     },
     "Puerto Rico": {
         biome: "tropical-forest",
@@ -2440,7 +2228,7 @@ const countryData = {
             { name: "Veado-nobre", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }, { name: "Raposa-vermelha", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }, { name: "Esquilo-cinzento", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }
         ],
         biomeImg: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Horseshoe_Bend_-_colorado_river_-_arizona.jpg/480px-Horseshoe_Bend_-_colorado_river_-_arizona.jpg",
-        capital: "São Tomé", population: "—", area: "—", climate: "Temperado / Continental"
+        capital: "—", population: "—", area: "—", climate: "Temperado / Continental"
     },
     "Cabo Verde": {
         biome: "savanna",
@@ -2500,7 +2288,7 @@ const countryData = {
             { name: "Veado-nobre", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }, { name: "Raposa-vermelha", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }, { name: "Esquilo-cinzento", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }
         ],
         biomeImg: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Horseshoe_Bend_-_colorado_river_-_arizona.jpg/480px-Horseshoe_Bend_-_colorado_river_-_arizona.jpg",
-        capital: "Mariehamn", population: "—", area: "—", climate: "Temperado / Continental"
+        capital: "—", population: "—", area: "—", climate: "Temperado / Continental"
     },
     "Faroe Islands": {
         biome: "taiga",
@@ -2650,7 +2438,7 @@ const countryData = {
             { name: "Veado-nobre", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }, { name: "Raposa-vermelha", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }, { name: "Esquilo-cinzento", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }
         ],
         biomeImg: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Horseshoe_Bend_-_colorado_river_-_arizona.jpg/480px-Horseshoe_Bend_-_colorado_river_-_arizona.jpg",
-        capital: "King Edward Point", population: "—", area: "—", climate: "Temperado / Continental"
+        capital: "—", population: "—", area: "—", climate: "Temperado / Continental"
     },
     "Falkland Islands": {
         biome: "tropical-forest",
@@ -2770,7 +2558,7 @@ const countryData = {
             { name: "Veado-nobre", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }, { name: "Raposa-vermelha", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }, { name: "Esquilo-cinzento", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Standing_jaguar.jpg/320px-Standing_jaguar.jpg" }
         ],
         biomeImg: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Horseshoe_Bend_-_colorado_river_-_arizona.jpg/480px-Horseshoe_Bend_-_colorado_river_-_arizona.jpg",
-        capital: "Macau", population: "—", area: "—", climate: "Temperado / Continental"
+        capital: "—", population: "—", area: "—", climate: "Temperado / Continental"
     },
     "Ashmore and Cartier Islands": {
         biome: "temp-forest",
@@ -2813,682 +2601,3 @@ const countryData = {
         capital: "—", population: "—", area: "—", climate: "Temperado / Continental"
     },
 };
-;
-
-const countryBiomeMap = Object.fromEntries(
-    Object.entries(countryData).map(([k, v]) => [k, v.biome])
-);
-
-// Heurística robusta de latitude para os 10 biomas (RF01)
-function assignGlobalBiome(d) {
-    let lat = 0;
-    try { lat = d3.geoCentroid(d)[1]; } catch(e) {}
-    if (lat > 65 || lat < -60) return 'polar';
-    if (lat > 55) return 'tundra';
-    if (lat > 45) return 'taiga';
-    if (lat > 35) return 'temp-forest';
-    if (lat > 25 && lat <= 35) return 'mediterranean';
-    if (lat >= -18 && lat <= 18) return 'tropical-forest';
-    if (lat >= -28 && lat < -18) return 'savanna';
-    return 'desert';
-}
-
-// ─── DECLARAÇÃO GLOBAL PARA ABERTURA DE DETALHES DE ANIMAIS (RF05) ─────────────
-let lastFocusedElement = null;
-let shortcutsLastFocused = null;
-
-function trapFocus(e) {
-    if (e.key !== 'Tab') return;
-    const focusables = this.querySelectorAll('button, [tabindex="0"], a, input, select, textarea');
-    if (focusables.length === 0) return;
-    const first = focusables[0];
-    const last = focusables[focusables.length - 1];
-    
-    if (e.shiftKey) { // Shift + Tab
-        if (document.activeElement === first) {
-            last.focus();
-            e.preventDefault();
-        }
-    } else { // Tab
-        if (document.activeElement === last) {
-            first.focus();
-            e.preventDefault();
-        }
-    }
-}
-
-window.openSpeciesModal = function(animalName, countryDataName = '') {
-    const modal = document.getElementById('species-modal');
-    let data = speciesDatabase[animalName];
-
-    // Fallback dinâmico educacional se a espécie não estiver cadastrada no banco de dados fixo
-    if (!data) {
-        let foundBiome = 'tropical-forest';
-        if (countryDataName && countryData[countryDataName]) {
-            foundBiome = countryData[countryDataName].biome;
-        } else {
-            for (const bKey in biomesData) {
-                if (biomesData[bKey].animals.includes(animalName)) {
-                    foundBiome = bKey;
-                    break;
-                }
-            }
-        }
-        
-        const biome = biomesData[foundBiome];
-        data = {
-            scientific: animalName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "-").toLowerCase(),
-            status: "Vulnerável",
-            statusClass: "status-vulnerable",
-            desc: `Uma espécie nativa do bioma ${biome.nome}. Desempenha um papel ecológico de extrema importância para o equilíbrio e preservação do habitat regional.`,
-            diet: "Consumidor típico do ecossistema local",
-            threats: `Fragmentação de seu habitat em decorrência de pressões urbanas ou agrícolas, poluição localizada e mudanças climáticas que afetam o bioma de ${biome.nome}.`,
-            action: "Apoiar programas locais de monitoramento de fauna e conservação de reservas naturais.",
-            img: "",
-            biome: foundBiome
-        };
-    }
-
-    const biomeObj = biomesData[data.biome];
-    
-    document.getElementById('modal-title').textContent = animalName;
-    document.getElementById('modal-scientific').textContent = data.scientific;
-    document.getElementById('modal-desc').textContent = data.desc;
-    document.getElementById('modal-diet').textContent = data.diet;
-    document.getElementById('modal-threats').textContent = data.threats;
-    document.getElementById('modal-action').textContent = data.action;
-    
-    const badge = document.getElementById('modal-badge');
-    badge.textContent = biomeObj.nome;
-    badge.style.backgroundColor = biomeObj.cor;
-    
-    const statusSpan = document.getElementById('modal-status');
-    statusSpan.textContent = data.status;
-    statusSpan.className = `status-badge ${data.statusClass}`;
-    
-    const modalImg = document.getElementById('modal-img');
-    const fallbackDiv = document.getElementById('modal-img-fallback');
-    
-    if (data.img) {
-        modalImg.src = data.img;
-        modalImg.alt = animalName;
-        modalImg.style.display = 'block';
-        fallbackDiv.classList.add('hidden');
-    } else {
-        modalImg.style.display = 'none';
-        fallbackDiv.classList.remove('hidden');
-        fallbackDiv.innerHTML = `<span style="font-size:4rem">${biomeObj.icon}</span>`;
-    }
-    
-    lastFocusedElement = document.activeElement;
-    modal.classList.remove('hidden');
-    
-    const closeBtn = document.getElementById('modal-close-btn');
-    if (closeBtn) closeBtn.focus();
-    
-    modal.addEventListener('keydown', trapFocus);
-};
-
-// ─── INICIALIZAÇÃO DO MAPA D3 E EVENTOS ────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-    const svg = d3.select("#world-map");
-    const width = 1000, height = 500;
-    const g = svg.append("g");
-
-    const zoom = d3.zoom()
-        .scaleExtent([1, 25])
-        .on("zoom", (event) => g.attr("transform", event.transform));
-
-    svg.call(zoom);
-
-    const projection = d3.geoNaturalEarth1().scale(160).translate([width / 2, height / 2]);
-    const pathGenerator = d3.geoPath().projection(projection);
-
-    d3.json(GEOJSON_SOURCE).then(data => {
-        projection.fitSize([width, height], data);
-
-        g.selectAll("path")
-            .data(data.features)
-            .enter()
-            .append("path")
-            .attr("d", pathGenerator)
-            .attr("class", "country-path")
-            .attr("tabindex", "0") // Acessibilidade por teclado (RNF02)
-            .attr("role", "button")
-            .attr("aria-label", d => {
-                const name = d.properties.name;
-                const biomeKey = countryBiomeMap[name] || assignGlobalBiome(d);
-                const biome = biomesData[biomeKey];
-                return `${name}, Bioma: ${biome.nome}`;
-            })
-            .attr("fill", d => {
-                const name = d.properties.name;
-                const biomeKey = countryBiomeMap[name] || assignGlobalBiome(d);
-                return biomesData[biomeKey].cor;
-            })
-            .attr("stroke", "#FFFFFF")
-            .attr("stroke-width", 0.5)
-            .on("mouseover", function(event, d) {
-                const name = d.properties.name;
-                const biomeKey = countryBiomeMap[name] || assignGlobalBiome(d);
-                const biome = biomesData[biomeKey];
-                const cData = countryData[name];
-
-                showPopup(event, biome, name, cData);
-                updateDetails(biome, name, cData);
-
-                // Destaque de todo o bioma (RF02)
-                g.selectAll(".country-path")
-                    .transition().duration(180)
-                    .attr("fill-opacity", function(pathData) {
-                        const pName = pathData.properties.name;
-                        const pBiomeKey = countryBiomeMap[pName] || assignGlobalBiome(pathData);
-                        return pBiomeKey === biomeKey ? 0.95 : 0.22;
-                    })
-                    .attr("stroke", function(pathData) {
-                        const pName = pathData.properties.name;
-                        const pBiomeKey = countryBiomeMap[pName] || assignGlobalBiome(pathData);
-                        return pBiomeKey === biomeKey ? "#FFFFFF" : "#E2E8F0";
-                    })
-                    .attr("stroke-width", function(pathData) {
-                        const pName = pathData.properties.name;
-                        const pBiomeKey = countryBiomeMap[pName] || assignGlobalBiome(pathData);
-                        return pBiomeKey === biomeKey ? 1.8 : 0.3;
-                    });
-
-                d3.select(this).raise();
-            })
-            .on("mouseout", function() {
-                document.getElementById('map-popup').style.display = 'none';
-                
-                g.selectAll(".country-path")
-                    .transition().duration(180)
-                    .attr("fill-opacity", 1.0)
-                    .attr("stroke", "#FFFFFF")
-                    .attr("stroke-width", 0.5);
-            })
-            .on("mousemove", (event) => {
-                const popup = document.getElementById('map-popup');
-                popup.style.left = (event.pageX + 16) + "px";
-                popup.style.top  = (event.pageY - 28) + "px";
-            })
-            .on("focus", function(event, d) {
-                // Suporte a foco de teclado
-                const name = d.properties.name;
-                const biomeKey = countryBiomeMap[name] || assignGlobalBiome(d);
-                const biome = biomesData[biomeKey];
-                const cData = countryData[name];
-
-                showPopupForKeyboard(event, biome, name, cData, this);
-                updateDetails(biome, name, cData);
-
-                g.selectAll(".country-path")
-                    .transition().duration(180)
-                    .attr("fill-opacity", function(pathData) {
-                        const pName = pathData.properties.name;
-                        const pBiomeKey = countryBiomeMap[pName] || assignGlobalBiome(pathData);
-                        return pBiomeKey === biomeKey ? 0.95 : 0.22;
-                    })
-                    .attr("stroke", function(pathData) {
-                        const pName = pathData.properties.name;
-                        const pBiomeKey = countryBiomeMap[pName] || assignGlobalBiome(pathData);
-                        return pBiomeKey === biomeKey ? "#FFFFFF" : "#E2E8F0";
-                    })
-                    .attr("stroke-width", function(pathData) {
-                        const pName = pathData.properties.name;
-                        const pBiomeKey = countryBiomeMap[pName] || assignGlobalBiome(pathData);
-                        return pBiomeKey === biomeKey ? 1.8 : 0.3;
-                    });
-                
-                d3.select(this).raise();
-            })
-            .on("blur", function() {
-                document.getElementById('map-popup').style.display = 'none';
-                g.selectAll(".country-path")
-                    .transition().duration(180)
-                    .attr("fill-opacity", 1.0)
-                    .attr("stroke", "#FFFFFF")
-                    .attr("stroke-width", 0.5);
-            });
-
-        // ─── INTERATIVIDADE DOS OCEANOS NO SVG (FUNDO DO MAPA) ───────────────
-        svg.on("mouseover", function(event) {
-            if (event.target === this) {
-                const biome = biomesData['ocean'];
-                showPopup(event, biome, 'Oceanos Globais', null);
-                updateDetails(biome, 'Oceanos Globais', null);
-            }
-        });
-        svg.on("click", function(event) {
-            if (event.target === this) {
-                const biome = biomesData['ocean'];
-                updateDetails(biome, 'Oceanos Globais', null);
-            }
-        });
-        svg.on("mousemove", function(event) {
-            if (event.target === this) {
-                const popup = document.getElementById('map-popup');
-                popup.style.left = (event.pageX + 16) + "px";
-                popup.style.top  = (event.pageY - 28) + "px";
-            }
-        });
-        svg.on("mouseout", function(event) {
-            if (event.relatedTarget && !svg.node().contains(event.relatedTarget)) {
-                document.getElementById('map-popup').style.display = 'none';
-            }
-        });
-
-        renderLegend();
-        setupControls(svg, zoom);
-
-    }).catch(err => console.error("Erro ao carregar GeoJSON:", err));
-
-    // ─── HELPERS DE MAPA E POPUPS (RF03, RF04) ──────────────────────────────────
-    function showPopup(event, biome, countryName, cData) {
-        const popup = document.getElementById('map-popup');
-        const sym = cData ? cData.symbol : biome.icon;
-        const capital = cData && cData.capital ? cData.capital : '—';
-        
-        popup.innerHTML = `
-            <div class="popup-title"><span>${sym}</span> <strong>${countryName}</strong></div>
-            <div class="popup-detail">Capital: ${capital}</div>
-            <div class="popup-detail">Bioma: ${biome.nome}</div>
-            <div class="popup-threats">⚠️ ${biome.ameacas}</div>
-        `;
-        popup.style.display = 'flex';
-    }
-
-    function showPopupForKeyboard(event, biome, countryName, cData, pathElement) {
-        const popup = document.getElementById('map-popup');
-        const sym = cData ? cData.symbol : biome.icon;
-        const capital = cData && cData.capital ? cData.capital : '—';
-        
-        popup.innerHTML = `
-            <div class="popup-title"><span>${sym}</span> <strong>${countryName}</strong></div>
-            <div class="popup-detail">Capital: ${capital}</div>
-            <div class="popup-detail">Bioma: ${biome.nome}</div>
-            <div class="popup-threats">⚠️ ${biome.ameacas}</div>
-        `;
-        popup.style.display = 'flex';
-        
-        // Posicionamento relativo à bounding box do teclado
-        const bbox = pathElement.getBoundingClientRect();
-        const mapContainer = document.getElementById('map-container').getBoundingClientRect();
-        
-        popup.style.left = (bbox.left - mapContainer.left + bbox.width / 2) + "px";
-        popup.style.top  = (bbox.top - mapContainer.top - 50) + "px";
-    }
-
-    function updateDetails(biome, countryName, cData) {
-        const sidebar = document.getElementById('biome-details');
-        const animals   = cData ? cData.animals : biome.animals;
-        const imgs      = cData ? cData.animalImgs : [];
-        const biomeImg  = cData ? cData.biomeImg : (biome.heroImg || '');
-        const capital   = cData ? cData.capital : '—';
-        const pop       = cData ? cData.population : '—';
-        const area      = cData ? cData.area : '—';
-        const climate   = cData ? cData.climate : biome.nome;
-        const symbol    = cData ? cData.symbol : biome.icon;
-
-        const animalTags = animals.map(a => `
-            <span class="animal-tag" onclick="openSpeciesModal('${a}', '${countryName}')" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openSpeciesModal('${a}', '${countryName}'); }" role="button" tabindex="0">${a}</span>
-        `).join('');
-
-        const imgCards = imgs.length > 0 ? imgs.map(img => `
-            <div class="animal-card" onclick="openSpeciesModal('${img.name}', '${countryName}')" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openSpeciesModal('${img.name}', '${countryName}'); }" role="button" tabindex="0" aria-label="Ver detalhes de ${img.name}">
-                <div class="animal-img-wrap">
-                    <img src="${img.url}" alt="${img.name}"
-                         onerror="this.parentElement.innerHTML='<div class=\\'img-fallback\\'>${symbol}</div>'"
-                         loading="lazy" />
-                </div>
-                <p class="animal-card-name">${img.name}</p>
-            </div>
-        `).join('') : `<div class="no-img-note">Imagens não disponíveis para este país.</div>`;
-
-        const heroBg = biomeImg
-            ? `background-image: url('${biomeImg}'); background-size: cover; background-position: center;`
-            : `background: ${biome.cor}22;`;
-
-        sidebar.innerHTML = `
-            <div class="details-container" style="animation: fadeInUp 0.4s ease">
-                <!-- HERO -->
-                <div class="biome-hero-img" style="${heroBg}">
-                    <div class="hero-overlay">
-                        <span class="hero-symbol">${symbol}</span>
-                        <div class="hero-info">
-                            <h2 class="country-name">${countryName}</h2>
-                            <span class="biome-badge" style="background:${biome.cor}">${biome.nome}</span>
-                        </div>
-                    </div>
-                    <div class="hero-img-credit">📷 Wikimedia Commons / Acervo</div>
-                </div>
-
-                <!-- STATS RÁPIDOS -->
-                <div class="stat-row">
-                    <div class="stat-box">
-                        <span class="stat-icon">🏛️</span>
-                        <span class="stat-label">Capital</span>
-                        <span class="stat-val">${capital}</span>
-                    </div>
-                    <div class="stat-box">
-                        <span class="stat-icon">👥</span>
-                        <span class="stat-label">População</span>
-                        <span class="stat-val">${pop}</span>
-                    </div>
-                    <div class="stat-box">
-                        <span class="stat-icon">📐</span>
-                        <span class="stat-label">Área</span>
-                        <span class="stat-val">${area}</span>
-                    </div>
-                    <div class="stat-box">
-                        <span class="stat-icon">🌡️</span>
-                        <span class="stat-label">Clima</span>
-                        <span class="stat-val">${climate}</span>
-                    </div>
-                </div>
-
-                <!-- DESCRIÇÃO DO BIOMA -->
-                <div class="section-block">
-                    <p class="section-title">🌿 Sobre o Bioma</p>
-                    <p class="biome-desc">${biome.desc}</p>
-                </div>
-
-                <!-- RISCOS AMBIENTAIS (RF04) -->
-                <div class="section-block">
-                    <p class="section-title">⚠️ Riscos Ambientais</p>
-                    <div class="threats-block">
-                        ${biome.ameacas}
-                    </div>
-                </div>
-
-                <!-- ANIMAIS EM DESTAQUE (com imagens) -->
-                <div class="section-block">
-                    <p class="section-title">🐾 Animais em Destaque</p>
-                    <div class="animal-cards-grid">
-                        ${imgCards}
-                    </div>
-                </div>
-
-                <!-- TODOS OS ANIMAIS -->
-                <div class="section-block">
-                    <p class="section-title">📋 Fauna Característica</p>
-                    <div class="animal-tags">
-                        ${animalTags}
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-
-    function renderLegend() {
-        const legend = document.getElementById('legend');
-        legend.innerHTML = '<p class="panel-title">🌿 Biomas do Mundo</p><ul class="legend-list"></ul>';
-        const list = legend.querySelector('.legend-list');
-        Object.keys(biomesData).forEach(key => {
-            const item = biomesData[key];
-            list.innerHTML += `
-                <li class="legend-item" data-biome="${key}" tabindex="0" role="button" aria-label="Destacar bioma ${item.nome}">
-                    <span class="color-box" style="background:${item.cor}"></span>
-                    <div class="legend-text">
-                        <span class="legend-name">${item.nome}</span>
-                        <span class="legend-animals">${item.animals.slice(0,2).join(', ')}</span>
-                    </div>
-                </li>`;
-        });
-        
-        // Interatividade na legenda para destacar bioma
-        list.querySelectorAll('.legend-item').forEach(item => {
-            const biomeKey = item.getAttribute('data-biome');
-            const highlight = () => {
-                g.selectAll(".country-path")
-                    .transition().duration(180)
-                    .attr("fill-opacity", function(pathData) {
-                        const pName = pathData.properties.name;
-                        const pBiomeKey = countryBiomeMap[pName] || assignGlobalBiome(pathData);
-                        return pBiomeKey === biomeKey ? 0.95 : 0.22;
-                    });
-            };
-            const resetHighlight = () => {
-                g.selectAll(".country-path")
-                    .transition().duration(180)
-                    .attr("fill-opacity", 1.0);
-            };
-            
-            item.addEventListener('mouseenter', highlight);
-            item.addEventListener('focus', highlight);
-            item.addEventListener('mouseleave', resetHighlight);
-            item.addEventListener('blur', resetHighlight);
-            
-            const selectBiome = () => {
-                const biome = biomesData[biomeKey];
-                updateDetails(biome, biome.nome, null);
-            };
-            item.addEventListener('click', selectBiome);
-            item.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    selectBiome();
-                }
-            });
-        });
-    }
-
-    function setupControls(svg, zoom) {
-        d3.select("#zoom-in").on("click",    () => svg.transition().call(zoom.scaleBy, 1.5));
-        d3.select("#zoom-out").on("click",   () => svg.transition().call(zoom.scaleBy, 0.7));
-        d3.select("#reset-zoom").on("click", () => svg.transition().call(zoom.transform, d3.zoomIdentity));
-    }
-});
-
-// ─── NAVEGAÇÃO DE ABAS (SPA) ──────────────────────────────────────────────────
-const navItems = document.querySelectorAll('.nav-item');
-const tabViews = document.querySelectorAll('.tab-view');
-
-navItems.forEach(item => {
-    item.addEventListener('click', () => {
-        const tabName = item.getAttribute('data-tab');
-        
-        navItems.forEach(nav => nav.classList.remove('active'));
-        item.classList.add('active');
-        
-        tabViews.forEach(view => {
-            view.classList.add('hidden');
-            view.classList.remove('active-view');
-        });
-        
-        const activeView = document.getElementById(`view-${tabName}`);
-        if (activeView) {
-            activeView.classList.remove('hidden');
-            activeView.classList.add('active-view');
-        }
-        
-        if (tabName === 'biomes') {
-            renderBiomesGrid();
-        } else if (tabName === 'species') {
-            renderSpeciesGrid();
-        }
-    });
-});
-
-// ─── RENDERIZAÇÃO DA GRADE DE BIOMAS (Aba Biomas) ──────────────────────────────
-function renderBiomesGrid() {
-    const container = document.getElementById('biomes-list-container');
-    if (!container) return;
-    container.innerHTML = '';
-
-    Object.keys(biomesData).forEach(key => {
-        const biome = biomesData[key];
-        const card = document.createElement('div');
-        card.className = 'biome-grid-card';
-        
-        const heroBg = biome.heroImg
-            ? `background-image: url('${biome.heroImg}');`
-            : `background-color: ${biome.cor}22;`;
-            
-        card.innerHTML = `
-            <div class="biome-card-hero" style="${heroBg}">
-                <h3 class="biome-card-title"><span>${biome.icon}</span> ${biome.nome}</h3>
-            </div>
-            <div class="biome-card-content">
-                <p class="biome-card-desc">${biome.desc}</p>
-                <div class="biome-card-threats">
-                    <strong>⚠️ Principais Ameaças:</strong> ${biome.ameacas}
-                </div>
-                <div class="biome-card-footer">
-                    🐾 Fauna Representativa: ${biome.animals.join(', ')}
-                </div>
-            </div>
-        `;
-        container.appendChild(card);
-    });
-}
-
-// ─── RENDERIZAÇÃO DA GALERIA DE ESPÉCIES E FILTROS (Aba Espécies) ─────────────
-function renderSpeciesGrid() {
-    const container = document.getElementById('species-list-container');
-    if (!container) return;
-    
-    const searchVal = document.getElementById('species-search').value.toLowerCase();
-    const filterBiome = document.getElementById('species-filter-biome').value;
-    
-    container.innerHTML = '';
-    
-    // Popular o seletor de biomas dinamicamente caso esteja vazio
-    const selectFilter = document.getElementById('species-filter-biome');
-    if (selectFilter.options.length <= 1) {
-        Object.keys(biomesData).forEach(bKey => {
-            const opt = document.createElement('option');
-            opt.value = bKey;
-            opt.textContent = biomesData[bKey].nome;
-            selectFilter.appendChild(opt);
-        });
-    }
-    
-    Object.keys(speciesDatabase).forEach(name => {
-        const species = speciesDatabase[name];
-        
-        const matchesSearch = name.toLowerCase().includes(searchVal) || species.scientific.toLowerCase().includes(searchVal);
-        const matchesBiome = filterBiome === 'all' || species.biome === filterBiome;
-        
-        if (matchesSearch && matchesBiome) {
-            const card = document.createElement('div');
-            card.className = 'species-grid-card';
-            card.setAttribute('role', 'button');
-            card.setAttribute('tabindex', '0');
-            card.setAttribute('aria-label', `Espécie: ${name}, ${species.scientific}`);
-            
-            card.addEventListener('click', () => openSpeciesModal(name));
-            card.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    openSpeciesModal(name);
-                }
-            });
-            
-            const bObj = biomesData[species.biome];
-            
-            card.innerHTML = `
-                <div class="species-grid-img-wrap">
-                    <img src="${species.img}" alt="${name}" loading="lazy"
-                         onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');">
-                    <div class="img-fallback hidden"><span>${bObj.icon}</span></div>
-                </div>
-                <div class="species-grid-content">
-                    <h3 class="species-grid-title">${name}</h3>
-                    <p class="species-grid-scientific">${species.scientific}</p>
-                    <div class="species-grid-badge-row">
-                        <span class="biome-badge" style="background:${bObj.cor}; font-size:0.6rem; padding:2px 6px;">${bObj.nome}</span>
-                        <span class="status-badge ${species.statusClass}" style="font-size:0.6rem; padding:2px 6px;">${species.status}</span>
-                    </div>
-                </div>
-            `;
-            container.appendChild(card);
-        }
-    });
-}
-
-// Ouvintes dos filtros de busca de espécies
-document.getElementById('species-search').addEventListener('input', renderSpeciesGrid);
-document.getElementById('species-filter-biome').addEventListener('change', renderSpeciesGrid);
-
-window.closeSpeciesModal = function() {
-    const modal = document.getElementById('species-modal');
-    modal.classList.add('hidden');
-    modal.removeEventListener('keydown', trapFocus);
-    if (lastFocusedElement) {
-        lastFocusedElement.focus();
-        lastFocusedElement = null;
-    }
-};
-
-window.closeShortcutsModal = function() {
-    const modal = document.getElementById('shortcuts-modal');
-    modal.classList.add('hidden');
-    modal.removeEventListener('keydown', trapFocus);
-    if (shortcutsLastFocused) {
-        shortcutsLastFocused.focus();
-        shortcutsLastFocused = null;
-    }
-};
-
-// ─── FECHAMENTO DOS MODAIS ────────────────────────────────────────────────────
-document.getElementById('modal-close-btn').addEventListener('click', closeSpeciesModal);
-document.getElementById('shortcuts-close-btn').addEventListener('click', closeShortcutsModal);
-
-document.getElementById('species-modal').addEventListener('click', (e) => {
-    if (e.target === document.getElementById('species-modal')) {
-        closeSpeciesModal();
-    }
-});
-document.getElementById('shortcuts-modal').addEventListener('click', (e) => {
-    if (e.target === document.getElementById('shortcuts-modal')) {
-        closeShortcutsModal();
-    }
-});
-
-// ─── RECURSOS DE ACESSIBILIDADE DE TELA (RNF02) ───────────────────────────────
-let fontScale = 100;
-document.getElementById('btn-font-decrease').addEventListener('click', () => {
-    if (fontScale > 80) {
-        fontScale -= 10;
-        document.documentElement.style.fontSize = `${fontScale}%`;
-    }
-});
-document.getElementById('btn-font-increase').addEventListener('click', () => {
-    if (fontScale < 130) {
-        fontScale += 10;
-        document.documentElement.style.fontSize = `${fontScale}%`;
-    }
-});
-
-document.getElementById('btn-contrast-toggle').addEventListener('click', () => {
-    document.body.classList.toggle('high-contrast');
-});
-
-document.getElementById('btn-shortcuts').addEventListener('click', () => {
-    const modal = document.getElementById('shortcuts-modal');
-    shortcutsLastFocused = document.activeElement;
-    modal.classList.remove('hidden');
-    const closeBtn = document.getElementById('shortcuts-close-btn');
-    if (closeBtn) closeBtn.focus();
-    modal.addEventListener('keydown', trapFocus);
-});
-
-// Atalhos Globais de Teclado
-document.addEventListener('keydown', (e) => {
-    // Fechar modais ao teclar Esc
-    if (e.key === 'Escape') {
-        if (!document.getElementById('species-modal').classList.contains('hidden')) {
-            closeSpeciesModal();
-        }
-        if (!document.getElementById('shortcuts-modal').classList.contains('hidden')) {
-            closeShortcutsModal();
-        }
-    }
-    
-    // Alt+C toggles Alto Contraste
-    if (e.altKey && (e.key === 'c' || e.key === 'C')) {
-        e.preventDefault();
-        document.body.classList.toggle('high-contrast');
-    }
-});
